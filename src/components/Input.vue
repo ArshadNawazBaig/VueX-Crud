@@ -1,6 +1,6 @@
 <template>
-  <div class="todos">
-      <h1>Todos</h1>
+  <div class="input-wrapper">
+      <input type="text" />
   </div>
 </template>
 
