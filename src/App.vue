@@ -1,23 +1,13 @@
 <template>
   <div id="app">
     <div class="container">
-      <router-view/>
+      <router-view />
     </div>
   </div>
 </template>
 
 <script>
-import {mapActions} from 'vuex'
-export default {
-  methods: {
-    ...mapActions(['getCurrentUser'])
-  },
-  mounted() {
-    if (localStorage.currentUser) {
-      this.getCurrentUser(JSON.parse(localStorage.currentUser))
-    }
-  }
-}
+export default {};
 </script>
 
 <style>

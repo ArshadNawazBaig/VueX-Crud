@@ -1,17 +1,29 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
+import { HTTP } from "../api";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    currentUser: [],
+    todos: [],
     loading: null,
-    error: null
+    error: null,
   },
   mutations: {
-    setCurrentUser: (state, payload) => {
-      state.currentUser = payload;
+    setTodos: (state, payload) => {
+      state.todos = payload;
+    },
+    addTodo: (state, payload) => {
+      state.todos.unshift(payload);
+    },
+    removeTodo: (state, id) => {
+      const index = state.todos.findIndex((todo) => todo.id == id);
+      state.todos.splice(index, 1);
+    },
+    updateTodo: (state, payload) => {
+      const index = state.todos.findIndex((todo) => todo.id == payload.id);
+      state.todos.splice(index, 1, payload);
     },
     setLoading: (state, payload) => {
       state.loading = payload;
@@ -19,34 +31,57 @@ export default new Vuex.Store({
     setError: (state, payload) => {
       state.error = payload;
     },
-    removeUser: (state, payload) => {
-      state.currentUser = payload;
-    },
   },
   actions: {
-    getCurrentUser ({commit}, payload) {
-      commit('setLoading', true);
-      if(!localStorage.currentUser) {
-        localStorage.setItem('currentUser', JSON.stringify(payload))
-        commit('setCurrentUser', JSON.parse(localStorage.currentUser))
-        commit('setLoading', false);
-      } else {
-        commit('setCurrentUser', JSON.parse(localStorage.currentUser))
-        commit('setLoading', false);
+    async handleGetTodos({ commit }) {
+      commit("setLoading", true);
+      try {
+        const response = await HTTP.get("todos");
+        commit("setTodos", response.data);
+        commit("setLoading", false);
+      } catch (err) {
+        commit("setError", err);
+        commit("setLoading", false);
       }
     },
-    async logout({commit}) {
-      commit('setLoading', true);
-      if (localStorage.currentUser) {
-        localStorage.setItem('currentUser', '')
-        commit('removeUser', [])
+    async handleDeleteTodo({ commit }, id) {
+      commit("setLoading", true);
+      try {
+        await HTTP.delete(`todos/${id}`);
+        commit("removeTodo", id);
+        commit("setLoading", false);
+      } catch (err) {
+        commit("setError", err);
+        commit("setLoading", false);
       }
-    }
+    },
+    async addTodo({ commit }, payload) {
+      commit("setLoading", true);
+      try {
+        const response = await HTTP.post(`todos`, payload);
+        console.log(response);
+        commit("addTodo", response.data);
+        commit("setLoading", false);
+      } catch (err) {
+        commit("setError", err);
+        commit("setLoading", false);
+      }
+    },
+    async updateTodo({ commit }, payload) {
+      commit("setLoading", true);
+      try {
+        await HTTP.put(`todos/${payload.id}`);
+        commit("updateTodo", payload);
+        commit("setLoading", false);
+      } catch (err) {
+        commit("setLoading", false);
+        commit("setError", err);
+      }
+    },
   },
   getters: {
-    currentUser: state => state.currentUser,
-    loading: state => state.loading,
+    todos: (state) => state.todos,
+    loading: (state) => state.loading,
   },
-  modules: {
-  }
-})
+  modules: {},
+});
