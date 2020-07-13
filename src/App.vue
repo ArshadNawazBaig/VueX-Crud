@@ -7,16 +7,7 @@
 </template>
 
 <script>
-import {mapActions} from 'vuex'
 export default {
-  methods: {
-    ...mapActions(['getCurrentUser'])
-  },
-  mounted() {
-    if (localStorage.currentUser) {
-      this.getCurrentUser(JSON.parse(localStorage.currentUser))
-    }
-  }
 }
 </script>
 

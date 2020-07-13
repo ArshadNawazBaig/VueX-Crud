@@ -1,17 +1,18 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import {HTTP} from '../api'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    currentUser: [],
+    todos: [],
     loading: null,
     error: null
   },
   mutations: {
-    setCurrentUser: (state, payload) => {
-      state.currentUser = payload;
+    setTodos: (state, payload) => {
+      state.todos = payload;
     },
     setLoading: (state, payload) => {
       state.loading = payload;
@@ -19,32 +20,22 @@ export default new Vuex.Store({
     setError: (state, payload) => {
       state.error = payload;
     },
-    removeUser: (state, payload) => {
-      state.currentUser = payload;
-    },
   },
   actions: {
-    getCurrentUser ({commit}, payload) {
+    async handleGetTodos({commit}) {
       commit('setLoading', true);
-      if(!localStorage.currentUser) {
-        localStorage.setItem('currentUser', JSON.stringify(payload))
-        commit('setCurrentUser', JSON.parse(localStorage.currentUser))
+      try {
+        const response = await HTTP.get('todos');
+        commit('setTodos', response.data);
         commit('setLoading', false);
-      } else {
-        commit('setCurrentUser', JSON.parse(localStorage.currentUser))
+      } catch (err) {
+        commit('setError', err);
         commit('setLoading', false);
-      }
-    },
-    async logout({commit}) {
-      commit('setLoading', true);
-      if (localStorage.currentUser) {
-        localStorage.setItem('currentUser', '')
-        commit('removeUser', [])
       }
     }
   },
   getters: {
-    currentUser: state => state.currentUser,
+    todos: state => state.todos,
     loading: state => state.loading,
   },
   modules: {
