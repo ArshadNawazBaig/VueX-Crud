@@ -56,6 +56,7 @@ export default {
         completed: false,
       };
       this.addTodo(newTodo);
+      this.title = "";
     },
     handleDblClick(todo) {
       const updTodo = {
@@ -73,6 +74,28 @@ export default {
 </script>
 
 <style scoped>
+.todo-form {
+  display: flex;
+}
+.todo-form input {
+  flex: 10;
+  padding: 10px;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border: 1px solid #c5c5c5;
+  outline: none;
+  border-right: none;
+}
+.todo-form button {
+  flex: 2;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border: 1px solid #c5c5c5;
+  background-color: #21d4fd;
+  background-image: linear-gradient(19deg, #21d4fd 27%, #b721ff 99%);
+  color: #fff;
+  cursor: pointer;
+}
 .todos-wrapper {
   display: flex;
   flex-wrap: wrap;
